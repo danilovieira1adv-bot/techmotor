@@ -1,0 +1,164 @@
+**Prompt para Desenvolvimento do Sistema Integrado de Gestão de Retífica de Motores a Diesel com Inteligência Artificial via WhatsApp**
+
+**Objetivo**  
+Criar um sistema completo (web, backend, banco de dados, integrações e inteligência artificial) que digitalize 100% do processo de retífica de motores a diesel, aumente a produtividade em 40% e reduza retrabalhos em 35%, conforme especificações detalhadas abaixo. O sistema deve ser entregue com código-fonte, documentação e instruções de implantação (preferencialmente conteinerizado com Docker).
+
+---
+
+## 1. VISÃO GERAL DO SISTEMA
+
+### 1.1 Arquitetura em Camadas
+- **Frontend Web**: Interface responsiva (para desktop e tablets) usada pelos colaboradores da retífica. Deve conter dashboards, formulários de inspeção, listas de ordens de serviço, visualização de relatórios, etc.
+- **Backend**: API RESTful, preferencialmente construída em microsserviços (ou monolito bem estruturado) para gerenciar todas as funcionalidades.
+- **Banco de Dados**: Relacional (ex: PostgreSQL) com suporte a cache para consultas rápidas de dados técnicos.
+- **Inteligência Artificial**:
+  - Modelo de linguagem (LLM) treinado/fine‑tuned com manuais técnicos de motores diesel (Caterpillar, Cummins, Mercedes, VW, Scania, Volvo) para responder consultas em tempo real via WhatsApp.
+  - Módulo de OCR/Vision para extrair números de série, QR Codes e dados de etiquetas.
+  - Agente de IA para extrair dados de PDFs (manuais, tabelas de torque) e alimentar a base de conhecimento.
+- **Integrações**:
+  - WhatsApp Business API (ou Twilio para WhatsApp) para comunicação bidirecional com clientes e colaboradores.
+  - Leitura ótica (câmeras dos dispositivos móveis) para captura de códigos e imagens.
+
+---
+
+## 2. REQUISITOS FUNCIONAIS DETALHADOS
+
+### 2.1 Módulo 1 – Identificação Dinâmica de Peças/Motores
+- **Registro Inicial**:
+  - Ao chegar um motor ou peça, o colaborador utiliza um aplicativo web (acessível via celular/tablet) para capturar:
+    - Número de série (via digitação ou OCR da câmera).
+    - QR Code (se presente).
+    - Marca/modelo/ano (quando aplicável).
+  - Os campos obrigatórios seguem a tabela abaixo:
+
+| Categoria         | Tipo de Peça | Identificação (campos a serem registrados)                              |
+|-------------------|--------------|-------------------------------------------------------------------------|
+| Peças Rolantes    | Bloco        | Número de série (17 dígitos) + Marca + Modelo                          |
+|                   | Biela        | Padrão “LA-NNECK-NO-CYL” ou QR Code                                    |
+|                   | Virabrequim  | Código do fornecedor + posição 1‑4 da matrícula                        |
+| Sistema Valvetrain| Comando      | Chassi + ano + motorização (ex.: 8.3L 250HP)                           |
+|                   | Cabeçote     | Número do cabeçote + Material (ferro/alumínio)                         |
+
+- **Comportamento**:
+  - Se for um motor completo, o sistema pergunta se deseja cadastrar todos os subcomponentes (bielas, virabrequim, etc.) vinculados a ele.
+  - Gera automaticamente um QR Code interno para rastreamento da peça dentro da oficina (impresso em etiqueta).
+  - Utiliza IA (OCR/Vision) para preencher automaticamente os campos sempre que possível.
+
+### 2.2 Módulo 2 – Cadastro Técnico e Base de Conhecimento
+- **Dados de Referência por Fabricante/Modelo**:
+  - Tabelas de torque de fixação (cabeçote, biela, bronzinas, etc.).
+  - Medidas padrão de folgas e limites de desgaste.
+  - Diagramas de tolerâncias (imagens).
+  - Vídeos de montagem/desmontagem (links ou arquivos).
+- **Agente de IA para Extração de Manuais**:
+  - Permite o upload de PDFs de manuais técnicos.
+  - A IA extrai textos, tabelas e imagens, estruturando os dados e associando‑os aos modelos/fabricantes correspondentes.
+  - Alimenta a base de conhecimento que será usada pelo chatbot e pelos formulários de inspeção.
+
+### 2.3 Módulo 3 – Fluxo de Serviço (Orçamento e OS)
+O fluxo deve seguir rigorosamente o diagrama abaixo (traduzido para funcionalidades):
+
+1. **Identificação** (descrita em 2.1)
+2. **Seleção do tipo de serviço** (ex: retífica completa, troca de bronzinas, usinagem de cabeçote)
+3. **Geração de orçamento** (caso não haja pré‑aprovação):
+   - O sistema calcula automaticamente com base em tabelas de preços e horas de serviço estimadas.
+   - Envia via WhatsApp para aprovação do cliente.
+   - Cliente responde com “APROVADO” ou “REJEITADO”; o sistema interpreta a mensagem e atualiza o status.
+4. **Aprovação interna** (quando já existe orçamento aprovado previamente) – gera Ordem de Serviço (OS) automaticamente.
+5. **Inspeção Técnica**:
+   - Checklist digital com campos para medidas, defeitos, fotos.
+   - IA analisa as medidas e fotos, emitindo um parecer técnico (ex: “virabrequim dentro do limite, pode ser retificado”).
+6. **Liberação de Usinagem**:
+   - Após parecer, supervisor aprova a usinagem.
+   - Controle de usinagem registra medidas após cada operação, torques aplicados, folgas medidas.
+7. **Montagem e Teste Final**:
+   - Checklist final com QR Code para conferência.
+   - Geração de relatório de entrega com garantia digital.
+
+### 2.4 Módulo 4 – Interação via WhatsApp com IA
+- **Funcionalidades para Colaboradores**:
+  - Enviar uma mensagem para o número da retífica com o número da OS ou código da peça e perguntar, por exemplo: “Qual o torque do cabeçote do motor Cummins ISF 2.8?”.
+  - A IA responde em menos de 3 segundos, buscando na base de conhecimento.
+- **Funcionalidades para Clientes**:
+  - Receber notificações de andamento da OS.
+  - Aprovar orçamentos via resposta simples.
+  - Consultar prazos e valores.
+- **Implementação**:
+  - Webhook para receber mensagens do WhatsApp.
+  - Processamento de linguagem natural (usando o mesmo LLM fine‑tuned) para interpretar intenções e entidades (número OS, modelo, peça).
+  - Respostas em texto ou envio de images/documentos (ex: torque em PDF).
+
+### 2.5 Módulo 5 – Controle de Qualidade e Relatórios
+- **Checklist Final via QR Code**:
+  - Ao final da montagem, o responsável lê um QR Code gerado pelo sistema e confirma cada item do checklist (torques, folgas, fotos).
+- **Relatórios**:
+  - Relatório de entrega contendo todas as medidas, peças substituídas, garantia.
+  - Relatórios gerenciais: produtividade, taxa de retrabalho, peças com maior índice de defeito, etc.
+
+---
+
+## 3. MODELO DE DADOS (PRINCIPAIS ENTIDADES)
+
+Sugestão inicial – deve ser expandida conforme necessário:
+
+- **veiculo** (id, chassi, placa, marca, modelo, ano, motorizacao, cliente_id)
+- **motor** (id, numero_serie, tipo, veiculo_id) – opcional, se o motor vier separado
+- **peca** (id, tipo (bloco, biela, virabrequim...), identificador_original, qr_code_interno, motor_id, os_id)
+- **ordem_servico** (id, numero_os, data_abertura, cliente_id, veiculo_id, status, orcamento_aprovado)
+- **inspecao** (id, os_id, data, tecnico_responsavel, medidas_json, fotos_json, parecer_ia, aprovado)
+- **usinagem** (id, inspecao_id, operacao, medidas_pos, torques, data)
+- **montagem_final** (id, os_id, checklist_json, data_conclusao)
+- **cliente** (id, nome, telefone, whatsapp_opt_in)
+- **base_conhecimento** (id, fabricante, modelo, tipo_info, conteudo_texto, imagem_url, video_url)
+- **interacao_whatsapp** (id, remetente, mensagem, resposta_ia, timestamp)
+
+Defina relacionamentos e índices adequados para consultas rápidas.
+
+---
+
+## 4. REQUISITOS TÉCNICOS E TECNOLOGIAS SUGERIDAS
+
+- **Frontend**: React.js (ou Vue.js) com TypeScript, responsivo, utilizando bibliotecas como Material‑UI ou Bootstrap.
+- **Backend**: Node.js (NestJS ou Express) **ou** Python (Django + Django REST Framework). Deve expor endpoints RESTful documentados (Swagger).
+- **Banco de Dados**: PostgreSQL com Prisma ORM (ou TypeORM para Node, ou Django ORM para Python).
+- **IA / Machine Learning**:
+  - Utilizar um LLM local (ex: LLaMA 2 fine‑tuned) ou API da OpenAI (GPT‑4) com embeddings da base de conhecimento. Forneça scripts para fine‑tuning se for usar modelo próprio.
+  - OCR: Tesseract.js no frontend ou serviço Google Vision API (deixar configurável).
+- **WhatsApp**: Integrar via WhatsApp Business API (ou Twilio Sandbox para testes). Implementar webhook para receber mensagens e fila de processamento (Redis + Bull).
+- **Armazenamento de Arquivos**: S3 (ou MinIO local) para fotos, vídeos, PDFs.
+- **Implantação**: Docker e docker‑compose com serviços separados (frontend, backend, banco, redis, minio). Incluir scripts de migração e seed de dados iniciais (fabricantes, modelos básicos).
+- **Autenticação**: JWT, com papéis (admin, supervisor, técnico, cliente).
+
+---
+
+## 5. REQUISITOS DE DESEMPENHO E SEGURANÇA
+
+- As respostas da IA via WhatsApp devem ocorrer em **menos de 3 segundos**.
+- Banco de dados técnico deve utilizar cache (Redis) para consultas frequentes.
+- Toda comunicação com WhatsApp deve ser criptografada.
+- Controle de acesso baseado em função; clientes só veem suas próprias OS.
+- Logs de todas as interações importantes.
+
+---
+
+## 6. ENTREGÁVEIS ESPERADOS
+
+1. **Código fonte completo** (frontend, backend, scripts de IA, migrações) bem organizado e comentado.
+2. **Dockerfile e docker‑compose.yml** para subir todo o ambiente (incluindo serviços de IA simulados ou instruções para integração com APIs externas).
+3. **Documentação**:
+   - README com passo a passo para desenvolvimento e produção.
+   - Instruções para configuração da WhatsApp API (credenciais, webhook).
+   - Explicação da estrutura do banco e decisões de design.
+4. **Script de seed** com dados iniciais (fabricantes, modelos, torques básicos para Caterpillar, Cummins, Mercedes, VW, Scania, Volvo).
+5. **Coleção Postman** (ou OpenAPI) com exemplos de chamadas à API.
+6. **Testes automatizados** (unitários e de integração) para as principais funcionalidades.
+
+---
+
+## 7. OBSERVAÇÕES FINAIS
+
+- Priorize a clareza e a facilidade de manutenção do código.
+- Para a parte de IA, se o treinamento completo for inviável, forneça uma implementação utilizando a API da OpenAI com embeddings e contexto apropriado, incluindo instruções para substituir por um modelo local futuramente.
+- Garanta que o sistema funcione em ambiente Linux (Ubuntu) e que todas as dependências sejam explicitadas.
+
+**Agora, gere o sistema completo conforme este prompt. O resultado deve ser um projeto funcional, pronto para ser implantado e utilizado por uma retífica de motores a diesel.**
