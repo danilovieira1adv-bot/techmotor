@@ -1,0 +1,7 @@
+CREATE TABLE clients (id SERIAL PRIMARY KEY, name TEXT NOT NULL, phone TEXT, whatsapp_opt_in BOOLEAN DEFAULT false, created_at TIMESTAMP DEFAULT NOW());
+CREATE TABLE vehicles (id SERIAL PRIMARY KEY, client_id INTEGER REFERENCES clients(id) ON DELETE CASCADE, plate TEXT, model TEXT, brand TEXT, year INTEGER, engine_type TEXT, created_at TIMESTAMP DEFAULT NOW());
+CREATE TABLE service_orders (id SERIAL PRIMARY KEY, number TEXT UNIQUE, client_id INTEGER REFERENCES clients(id), vehicle_id INTEGER REFERENCES vehicles(id), status TEXT DEFAULT 'pending', description TEXT, approved BOOLEAN DEFAULT false, created_at TIMESTAMP DEFAULT NOW(), updated_at TIMESTAMP DEFAULT NOW());
+CREATE TABLE parts (id SERIAL PRIMARY KEY, service_order_id INTEGER REFERENCES service_orders(id) ON DELETE CASCADE, type TEXT, serial_number TEXT, brand TEXT, model TEXT, qr_code TEXT, status TEXT DEFAULT 'pending_inspection', created_at TIMESTAMP DEFAULT NOW());
+CREATE TABLE inspections (id SERIAL PRIMARY KEY, part_id INTEGER REFERENCES parts(id) ON DELETE CASCADE, technician TEXT, measurements JSONB, photos JSONB, ai_report TEXT, approved BOOLEAN, created_at TIMESTAMP DEFAULT NOW());
+CREATE TABLE machining (id SERIAL PRIMARY KEY, inspection_id INTEGER REFERENCES inspections(id) ON DELETE CASCADE, operations JSONB, final_measurements JSONB, approved BOOLEAN, created_at TIMESTAMP DEFAULT NOW());
+CREATE TABLE knowledge_base (id SERIAL PRIMARY KEY, manufacturer TEXT, model TEXT, component TEXT, torque_data JSONB, clearance_data JSONB, video_url TEXT, created_at TIMESTAMP DEFAULT NOW());

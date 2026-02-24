@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import type { Server } from "http";
 import { storage } from "./storage";
-import { api } from "@shared/routes";
+import { api } from "../shared/routes";
 import { z } from "zod";
 import { setupAuth, registerAuthRoutes, isAuthenticated } from "./replit_integrations/auth";
 import { registerChatRoutes } from "./replit_integrations/chat";
@@ -121,7 +121,7 @@ export async function registerRoutes(
     }
   });
 
-  seedDatabase();
+  // await seedDatabase(); // Desabilitado - tabelas já foram criadas manualmente
 
   return httpServer;
 }
