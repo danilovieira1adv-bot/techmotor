@@ -1,18 +1,8 @@
-FROM node:18-alpine
-
+FROM node:20-alpine
 WORKDIR /app
-
-# Copiar arquivos de dependência
 COPY package*.json ./
-
-# Instalar dependências (incluindo tsx)
 RUN npm install
-
-# Copiar o resto do código
+RUN chmod +x node_modules/.bin/*
 COPY . .
-
-# Expor porta
 EXPOSE 5000
-
-# Comando para rodar com tsx
-CMD ["npx", "tsx", "server/index.ts"]
+CMD ["node", "--import", "tsx", "server/index.ts"]

@@ -1,7 +1,11 @@
-// Auth simplificada para testes locais
-
-export function isAuthenticated() {
-  return true; // Sempre autenticado em testes
+export function isAuthenticated(req: any, res: any, next: any) {
+  req.user = {
+    id: 1,
+    username: "admin",
+    role: "admin",
+    claims: { sub: "1" }
+  };
+  next();
 }
 
 export function getSession(req: any) {
@@ -10,15 +14,14 @@ export function getSession(req: any) {
   };
 }
 
-export function setupAuth(app: any) {
+export async function setupAuth(app: any) {
   console.log("🚀 Auth desabilitada - Rodando em modo teste");
-  
-  // Middleware que adiciona usuário fictício
   app.use((req: any, res: any, next: any) => {
-    req.user = { 
-      id: 1, 
+    req.user = {
+      id: 1,
       username: "admin",
-      role: "admin"
+      role: "admin",
+      claims: { sub: "1" }
     };
     next();
   });

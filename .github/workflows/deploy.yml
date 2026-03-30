@@ -1,0 +1,23 @@
+name: Deploy TechMotor
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy na VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /opt/techmotor
+            git pull origin main
+            docker compose up -d --build
+            docker compose exec -T app sh -c "cd client && node ../node_modules/vite/bin/vite.js build"
+            echo "✅ Deploy concluído!"

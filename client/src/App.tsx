@@ -12,6 +12,10 @@ import DashboardPage from "@/pages/dashboard";
 import LoginPage from "@/pages/login";
 import ServiceOrdersPage from "@/pages/service-orders";
 import ChatPage from "@/pages/chat";
+import ClientsPage from "@/pages/clients";
+import KnowledgeBasePage from "@/pages/knowledge-base";
+import ClientsPage from "@/pages/clients";
+import KnowledgeBasePage from "@/pages/knowledge-base";
 
 function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -56,8 +60,8 @@ function Router() {
         <Route path="/" component={DashboardPage} />
         <Route path="/service-orders" component={ServiceOrdersPage} />
         <Route path="/chat" component={ChatPage} />
-        <Route path="/clients" component={() => <div className="p-8 text-center text-muted-foreground">Clients Module Placeholder</div>} />
-        <Route path="/knowledge" component={() => <div className="p-8 text-center text-muted-foreground">Knowledge Base Module Placeholder</div>} />
+        <Route path="/clients" component={ClientsPage} />
+        <Route path="/knowledge" component={KnowledgeBasePage} />
         <Route component={NotFound} />
       </Switch>
     </AuthenticatedLayout>

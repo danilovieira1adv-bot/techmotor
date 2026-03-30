@@ -8,8 +8,8 @@ import { registerChatRoutes } from "./replit_integrations/chat";
 import OpenAI from "openai";
 
 const openai = new OpenAI({
-  apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
-  baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
+  apiKey: process.env.DEEPSEEK_API_KEY,
+  baseURL: process.env.DEEPSEEK_API_URL,
 });
 
 export async function registerRoutes(
@@ -96,8 +96,8 @@ export async function registerRoutes(
     try {
       const input = api.inspections.analyze.input.parse(req.body);
       const response = await openai.chat.completions.create({
-        model: "gpt-5.1",
-        messages: [{ role: "user", content: `Analise as medidas para o motor e de o parecer (aprovado/reprovado): ${JSON.stringify(input.measurements)}` }],
+        model: "deepseek-chat",
+        messages: [{ role: "user", content: `Você é um especialista em retífica de motores diesel. Analise as medidas abaixo e emita um parecer técnico detalhado. Informe se está APROVADO ou REPROVADO, justificando com base nas tolerâncias técnicas. Medidas: ${JSON.stringify(input.measurements)}` }],
       });
       const aiReport = response.choices[0]?.message?.content || "Parecer não gerado.";
       const approved = aiReport.toLowerCase().includes("aprovado") && !aiReport.toLowerCase().includes("reprovado");

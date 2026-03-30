@@ -36,7 +36,12 @@ async function buildAll() {
   await rm("dist", { recursive: true, force: true });
 
   console.log("building client...");
-  await viteBuild();
+  // *** ALTERAÇÃO AQUI ***
+  await viteBuild({
+    root: 'client', // Diz ao Vite para procurar arquivos como index.html aqui
+    configFile: 'client/vite.config.ts', // Diz ao Vite onde encontrar sua configuração
+  });
+  // *********************
 
   console.log("building server...");
   const pkg = JSON.parse(await readFile("package.json", "utf-8"));
