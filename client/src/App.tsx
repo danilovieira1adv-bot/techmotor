@@ -12,6 +12,7 @@ import DashboardPage from "@/pages/dashboard";
 import LoginPage from "@/pages/login";
 import ServiceOrdersPage from "@/pages/service-orders";
 import ChatPage from "@/pages/chat";
+import InspectionPage from "@/pages/inspection";
 import ClientsPage from "@/pages/clients";
 import KnowledgeBasePage from "@/pages/knowledge-base";
 import ClientsPage from "@/pages/clients";
@@ -60,6 +61,7 @@ function Router() {
         <Route path="/" component={DashboardPage} />
         <Route path="/service-orders" component={ServiceOrdersPage} />
         <Route path="/chat" component={ChatPage} />
+        <Route path="/inspections" component={InspectionPage} />
         <Route path="/clients" component={ClientsPage} />
         <Route path="/knowledge" component={KnowledgeBasePage} />
         <Route component={NotFound} />

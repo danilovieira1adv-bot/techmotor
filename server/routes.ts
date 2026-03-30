@@ -1,6 +1,8 @@
 import type { Express } from "express";
 import type { Server } from "http";
 import { storage } from "./storage";
+import { db } from "./db";
+import { inspections } from "../shared/schema";
 import { api } from "../shared/routes";
 import { z } from "zod";
 import { setupAuth, registerAuthRoutes, isAuthenticated } from "./replit_integrations/auth";
@@ -79,6 +81,16 @@ export async function registerRoutes(
       res.status(201).json(p);
     } catch (e) {
       res.status(400).json({ message: "Invalid input" });
+    }
+  });
+
+  app.get("/api/inspections", isAuthenticated, async (req, res) => {
+    try {
+      const result = await db.select().from(inspections);
+      res.json(result);
+    } catch (e: any) {
+      console.error(e);
+      res.status(500).json({ message: e.message });
     }
   });
 
