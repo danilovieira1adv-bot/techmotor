@@ -1,3 +1,4 @@
+import session from "express-session";
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
@@ -5,6 +6,18 @@ import { startTelegramBot } from "./telegram";
 import { createServer } from "http";
 
 const app = express();
+
+  app.use(session({
+    secret: process.env.SESSION_SECRET || "techmotor-secret-key",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: false,
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 * 7
+    }
+  }));
+
 const httpServer = createServer(app);
 
 declare module "http" {

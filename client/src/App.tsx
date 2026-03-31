@@ -52,7 +52,7 @@ function Router() {
     );
   }
 
-  if (!user) {
+  if (!user && !isLoading) {
     return <LoginPage />;
   }
 

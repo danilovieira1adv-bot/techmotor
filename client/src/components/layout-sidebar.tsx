@@ -12,7 +12,7 @@ import {
   Menu,
   Activity
 } from "lucide-react";
-import { useAuth } from "@/hooks/use-auth";
+import { useAuth, useLogout } from "@/hooks/use-auth";
 import { 
   Sidebar, 
   SidebarContent, 

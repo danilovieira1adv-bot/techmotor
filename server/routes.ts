@@ -1,3 +1,4 @@
+import { validateUser, createUser, requireAuth } from "./auth";
 import type { Express } from "express";
 import type { Server } from "http";
 import { storage } from "./storage";
@@ -136,6 +137,52 @@ export async function registerRoutes(
   // await seedDatabase(); // Desabilitado - tabelas já foram criadas manualmente
 
 
+
+
+  // Auth routes
+  app.post("/api/auth/login", async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      if (!email || !password) return res.status(400).json({ message: "Email e senha obrigatórios" });
+      const user = await validateUser(email, password);
+      if (!user) return res.status(401).json({ message: "Email ou senha inválidos" });
+      (req.session as any).userId = user.id;
+      (req.session as any).userName = user.name;
+      (req.session as any).userEmail = user.email;
+      (req.session as any).userRole = user.role;
+      (req.session as any).tenantId = user.tenantId;
+      res.json({ id: user.id, name: user.name, email: user.email, role: user.role });
+    } catch (e: any) { res.status(500).json({ message: e.message }); }
+  });
+
+  app.post("/api/auth/logout", (req, res) => {
+    req.session.destroy(() => {
+      res.json({ message: "Logged out" });
+    });
+  });
+
+  app.get("/api/auth/me", (req: any, res) => {
+    if (!req.session?.userId) return res.status(401).json({ message: "Unauthorized" });
+    res.json({
+      id: req.session.userId,
+      name: req.session.userName,
+      email: req.session.userEmail,
+      role: req.session.userRole,
+      tenantId: req.session.tenantId,
+    });
+  });
+
+  app.post("/api/auth/register", async (req, res) => {
+    try {
+      const { name, email, password, role } = req.body;
+      const tenantId = "01fbaaea-5e38-4138-8281-54a6feec60dd";
+      const user = await createUser(tenantId, name, email, password, role || "technician");
+      res.status(201).json(user);
+    } catch (e: any) {
+      if (e.code === "23505") return res.status(400).json({ message: "Email já cadastrado" });
+      res.status(500).json({ message: e.message });
+    }
+  });
 
   // Budget routes
   app.get("/api/budgets", isAuthenticated, async (req, res) => {
