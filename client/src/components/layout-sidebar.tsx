@@ -5,7 +5,8 @@ import {
   Users, 
   MessageSquare, 
   BookOpen,
-  ClipboardList, 
+  ClipboardList,
+  FileText, 
   Settings, 
   LogOut,
   Menu,
@@ -40,6 +41,7 @@ export function AppSidebar() {
     { icon: MessageSquare, label: "WhatsApp Chat", href: "/chat" },
     { icon: BookOpen, label: "Knowledge Base", href: "/knowledge" },
     { icon: ClipboardList, label: "Inspeções", href: "/inspections" },
+    { icon: FileText, label: "Orçamentos", href: "/budgets" },
   ];
 
   return (

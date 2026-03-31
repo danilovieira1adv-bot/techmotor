@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import type { Server } from "http";
 import { storage } from "./storage";
-import { db } from "./db";
+import { db, pool } from "./db";
 import { inspections } from "../shared/schema";
 import { api } from "../shared/routes";
 import { z } from "zod";
@@ -134,6 +134,58 @@ export async function registerRoutes(
   });
 
   // await seedDatabase(); // Desabilitado - tabelas já foram criadas manualmente
+
+
+
+  // Budget routes
+  app.get("/api/budgets", isAuthenticated, async (req, res) => {
+    try {
+      const result = await pool.query("SELECT b.*, c.name as client_name FROM budgets b LEFT JOIN clients c ON b.client_id = c.id WHERE b.tenant_id = $1 ORDER BY b.created_at DESC", ["01fbaaea-5e38-4138-8281-54a6feec60dd"]);
+      res.json(result.rows);
+    } catch (e: any) { res.status(500).json({ message: e.message }); }
+  });
+
+  app.post("/api/budgets", isAuthenticated, async (req, res) => {
+    try {
+      const { clientId, serviceOrderId, items, discount, notes } = req.body;
+      const total = items.reduce((sum: number, item: any) => sum + Number(item.total), 0);
+      const result = await pool.query(
+        "INSERT INTO budgets (tenant_id, client_id, service_order_id, total, discount, notes, status, created_at, updated_at) VALUES ($1,$2,$3,$4,$5,$6,'pending',NOW(),NOW()) RETURNING *",
+        ["01fbaaea-5e38-4138-8281-54a6feec60dd", clientId, serviceOrderId || null, total, discount || 0, notes || null]
+      );
+      const budget = result.rows[0];
+      for (const item of items) {
+        await pool.query(
+          "INSERT INTO budget_items (budget_id, type, description, quantity, unit_price, total) VALUES ($1,$2,$3,$4,$5,$6)",
+          [budget.id, item.type, item.description, item.quantity, item.unitPrice, item.total]
+        );
+      }
+      res.status(201).json(budget);
+    } catch (e: any) { res.status(500).json({ message: e.message }); }
+  });
+
+  app.post("/api/budgets/:id/send-whatsapp", isAuthenticated, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const result = await pool.query("SELECT b.*, c.name as client_name, c.phone FROM budgets b LEFT JOIN clients c ON b.client_id = c.id WHERE b.id = $1", [id]);
+      const budget = result.rows[0];
+      if (!budget) return res.status(404).json({ message: "Budget not found" });
+      const total = (Number(budget.total) - Number(budget.discount)).toFixed(2);
+      const msg = "Orcamento TechMotor #" + budget.id + " - Total: R$ " + total + " - Para aprovar responda SIM";
+      const phone = budget.phone ? budget.phone.replace(/\D/g, "") : "";
+      const whatsappUrl = "https://wa.me/55" + phone + "?text=" + encodeURIComponent(msg);
+      await pool.query("UPDATE budgets SET status='sent', updated_at=NOW() WHERE id=$1", [id]);
+      res.json({ whatsappUrl, message: "Sent" });
+    } catch (e: any) { res.status(500).json({ message: e.message }); }
+  });
+
+  app.patch("/api/budgets/:id", isAuthenticated, async (req, res) => {
+    try {
+      const { status } = req.body;
+      const result = await pool.query("UPDATE budgets SET status=$1, updated_at=NOW() WHERE id=$2 RETURNING *", [status, req.params.id]);
+      res.json(result.rows[0]);
+    } catch (e: any) { res.status(500).json({ message: e.message }); }
+  });
 
   return httpServer;
 }
