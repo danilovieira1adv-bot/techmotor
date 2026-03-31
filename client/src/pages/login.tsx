@@ -22,7 +22,7 @@ export default function LoginPage() {
           <div className="h-14 w-14 rounded-2xl bg-primary flex items-center justify-center shadow-lg">
             <Wrench className="h-7 w-7 text-primary-foreground" />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight">TechMotor</h1>
+          <h1 className="text-2xl font-bold tracking-tight">RetíficaPro</h1>
           <p className="text-muted-foreground text-sm">Sistema de Retífica de Motores</p>
         </div>
 
@@ -70,7 +70,7 @@ export default function LoginPage() {
         </Card>
 
         <p className="text-center text-xs text-muted-foreground">
-          TechMotor © 2024 — Sistema profissional para retíficas
+          RetíficaPro © 2024 — Sistema profissional para retíficas
         </p>
       </div>
     </div>

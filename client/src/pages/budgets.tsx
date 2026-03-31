@@ -209,7 +209,7 @@ function printBudget(budget: any) {
     <html><head><title>Orçamento #${budget.id}</title>
     <style>body{font-family:Arial,sans-serif;padding:40px;max-width:800px;margin:0 auto}h1{color:#333}table{width:100%;border-collapse:collapse;margin:20px 0}th,td{border:1px solid #ddd;padding:10px;text-align:left}th{background:#f5f5f5}.total{font-size:1.5em;font-weight:bold;color:#333}.footer{margin-top:40px;border-top:1px solid #ddd;padding-top:20px;font-size:0.9em;color:#666}</style>
     </head><body>
-    <h1>🔧 TechMotor — Orçamento #${budget.id}</h1>
+    <h1>🔧 RetíficaPro — Orçamento #${budget.id}</h1>
     <p><strong>Data:</strong> ${(budget.created_at || budget.createdAt) ? new Date(budget.created_at || budget.createdAt).toLocaleDateString("pt-BR") : "-"}</p>
     <p><strong>Status:</strong> ${STATUS_LABELS[budget.status] ?? budget.status}</p>
     <table><tr><th>Descrição</th><th>Qtd</th><th>Unit.</th><th>Total</th></tr>
@@ -218,7 +218,7 @@ function printBudget(budget: any) {
     <p><strong>Desconto:</strong> -R$ ${Number(budget.discount).toFixed(2)}</p>
     <p class="total">Total Final: R$ ${(Number(budget.total) - Number(budget.discount)).toFixed(2)}</p>
     ${budget.notes ? `<p><strong>Observações:</strong> ${budget.notes}</p>` : ""}
-    <div class="footer"><p>TechMotor — Sistema de Retífica de Motores</p></div>
+    <div class="footer"><p>RetíficaPro — Sistema de Retífica de Motores</p></div>
     </body></html>
   `);
   win.document.close();

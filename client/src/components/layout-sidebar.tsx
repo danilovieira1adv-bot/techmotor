@@ -52,7 +52,7 @@ export function AppSidebar() {
             <Activity className="h-6 w-6" />
           </div>
           <div className="flex flex-col">
-            <span className="font-bold text-lg leading-none tracking-tight">TechMotor</span>
+            <span className="font-bold text-lg leading-none tracking-tight">RetíficaPro</span>
             <span className="text-xs text-muted-foreground">Rectification Sys</span>
           </div>
         </div>
@@ -115,7 +115,7 @@ export function MobileNav() {
       <Button variant="ghost" size="icon" onClick={toggleSidebar}>
         <Menu className="h-6 w-6" />
       </Button>
-      <span className="ml-2 font-bold text-lg">TechMotor</span>
+      <span className="ml-2 font-bold text-lg">RetíficaPro</span>
     </div>
   );
 }

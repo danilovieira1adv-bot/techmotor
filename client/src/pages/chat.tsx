@@ -35,7 +35,7 @@ export default function ChatPage() {
           const data = await res.json();
           setConversationId(data.id);
           // Add welcome message
-          setMessages([{ role: "assistant", content: "Hello! I'm the TechMotor AI assistant. How can I help you with engine diagnostics or parts today?" }]);
+          setMessages([{ role: "assistant", content: "Hello! I'm the RetíficaPro AI assistant. How can I help you with engine diagnostics or parts today?" }]);
         }
       } catch (err) {
         console.error("Failed to init chat", err);
@@ -130,7 +130,7 @@ export default function ChatPage() {
             </div>
             <div>
               <CardTitle className="text-lg">WhatsApp Support Simulator</CardTitle>
-              <CardDescription>TechMotor AI Agent • Online</CardDescription>
+              <CardDescription>RetíficaPro AI Agent • Online</CardDescription>
             </div>
           </div>
         </CardHeader>

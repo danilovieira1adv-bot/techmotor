@@ -22,7 +22,7 @@ export function startTelegramBot() {
   bot.onText(/\/start/, (msg) => {
     const chatId = msg.chat.id;
     bot!.sendMessage(chatId, 
-      "🔧 *Bem-vindo ao TechMotor!*\n\n" +
+      "🔧 *Bem-vindo ao RetíficaPro!*\n\n" +
       "Sou o assistente técnico da retífica. Posso te ajudar com:\n\n" +
       "• Dúvidas técnicas sobre motores diesel\n" +
       "• Status das suas ordens de serviço\n" +
@@ -51,7 +51,7 @@ export function startTelegramBot() {
     bot!.sendMessage(chatId,
       "🔍 *Suas Ordens de Serviço:*\n\n" +
       "Para consultar suas OS, entre em contato com a retífica informando seu nome.\n\n" +
-      "📞 Sistema TechMotor",
+      "📞 Sistema RetíficaPro",
       { parse_mode: "Markdown" }
     );
   });
@@ -70,7 +70,7 @@ export function startTelegramBot() {
         messages: [
           {
             role: "system",
-            content: "Você é um especialista técnico em retífica de motores diesel da empresa TechMotor. Responda de forma clara, objetiva e técnica. Use emojis para tornar a resposta mais amigável. Sempre em português brasileiro."
+            content: "Você é um especialista técnico em retífica de motores diesel da empresa RetíficaPro. Responda de forma clara, objetiva e técnica. Use emojis para tornar a resposta mais amigável. Sempre em português brasileiro."
           },
           {
             role: "user",

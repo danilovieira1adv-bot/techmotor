@@ -218,7 +218,7 @@ export async function registerRoutes(
       const budget = result.rows[0];
       if (!budget) return res.status(404).json({ message: "Budget not found" });
       const total = (Number(budget.total) - Number(budget.discount)).toFixed(2);
-      const msg = "Orcamento TechMotor #" + budget.id + " - Total: R$ " + total + " - Para aprovar responda SIM";
+      const msg = "Orcamento RetíficaPro #" + budget.id + " - Total: R$ " + total + " - Para aprovar responda SIM";
       const phone = budget.phone ? budget.phone.replace(/\D/g, "") : "";
       const whatsappUrl = "https://wa.me/55" + phone + "?text=" + encodeURIComponent(msg);
       await pool.query("UPDATE budgets SET status='sent', updated_at=NOW() WHERE id=$1", [id]);
