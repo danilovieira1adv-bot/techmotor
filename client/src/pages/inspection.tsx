@@ -110,7 +110,7 @@ export default function InspectionPage() {
 
 function CreateInspectionDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const { toast } = useToast();
-  const queryClient = useQueryClient();
+  const queryCliente = useQueryClient();
   const { data: serviceOrders } = useServiceOrders();
   const [form, setForm] = useState({ serviceOrderId: "", technician: "", diametroCilindro: "", folhaBronzina: "", torqueCabecote: "", assinatura: "" });
   const [aiReport, setAiReport] = useState("");
@@ -144,7 +144,7 @@ function CreateInspectionDialog({ open, onOpenChange }: { open: boolean; onOpenC
         body: JSON.stringify({ serviceOrderId: Number(form.serviceOrderId), technician: form.technician, measurements: { diametroCilindro: form.diametroCilindro, folhaBronzina: form.folhaBronzina, torqueCabecote: form.torqueCabecote, assinatura: form.assinatura }, aiReport: aiReport || null, approved }),
         credentials: "include",
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/inspections"] });
+      queryCliente.invalidateQueries({ queryKey: ["/api/inspections"] });
       toast({ title: "✅ Inspeção salva!" });
       onOpenChange(false);
       setForm({ serviceOrderId: "", technician: "", diametroCilindro: "", folhaBronzina: "", torqueCabecote: "", assinatura: "" });
@@ -218,7 +218,7 @@ function CreateInspectionDialog({ open, onOpenChange }: { open: boolean; onOpenC
           )}
         </div>
         <DialogFooter className="mt-6">
-          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
+          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancelarar</Button>
           <Button type="button" onClick={save} disabled={saving}>
             {saving ? <><Loader2 className="h-4 w-4 animate-spin mr-2"/>Salvando...</> : "Salvar Inspeção"}
           </Button>

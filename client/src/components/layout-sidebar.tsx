@@ -12,7 +12,7 @@ import {
   Menu,
   Activity
 } from "lucide-react";
-import { useAuth, useLogout } from "@/hooks/use-auth";
+import { useAuth, useSair } from "@/hooks/use-auth";
 import { 
   Sidebar, 
   SidebarContent, 
@@ -36,10 +36,10 @@ export function AppSidebar() {
 
   const menuItems = [
     { icon: Home, label: "Dashboard", href: "/" },
-    { icon: Wrench, label: "Service Orders", href: "/service-orders" },
-    { icon: Users, label: "Clients", href: "/clients" },
-    { icon: MessageSquare, label: "WhatsApp Chat", href: "/chat" },
-    { icon: BookOpen, label: "Knowledge Base", href: "/knowledge" },
+    { icon: Wrench, label: "Ordens de Serviço", href: "/service-orders" },
+    { icon: Users, label: "Clientes", href: "/clients" },
+    { icon: MessageSquare, label: "WhatsApp", href: "/chat" },
+    { icon: BookOpen, label: "Base de Conhecimento", href: "/knowledge" },
     { icon: ClipboardList, label: "Inspeções", href: "/inspections" },
     { icon: FileText, label: "Orçamentos", href: "/budgets" },
   ];
@@ -53,7 +53,7 @@ export function AppSidebar() {
           </div>
           <div className="flex flex-col">
             <span className="font-bold text-lg leading-none tracking-tight">RetíficaPro</span>
-            <span className="text-xs text-muted-foreground">Rectification Sys</span>
+            <span className="text-xs text-muted-foreground">Sistema de Retífica</span>
           </div>
         </div>
       </SidebarHeader>
@@ -100,7 +100,7 @@ export function AppSidebar() {
           onClick={() => logout()}
         >
           <LogOut className="h-4 w-4" />
-          <span className="group-data-[collapsible=icon]:hidden">Logout</span>
+          <span className="group-data-[collapsible=icon]:hidden">Sair</span>
         </Button>
       </SidebarFooter>
     </Sidebar>

@@ -91,7 +91,7 @@ export default function BudgetsPage() {
           <TableHeader>
             <TableRow className="bg-muted/50 hover:bg-muted/50">
               <TableHead>Nº</TableHead>
-              <TableHead>Cliente</TableHead>
+              <TableHead>Clientee</TableHead>
               <TableHead>OS</TableHead>
               <TableHead>Total</TableHead>
               <TableHead>Desconto</TableHead>
@@ -118,7 +118,7 @@ export default function BudgetsPage() {
               filtered?.map((budget: any, index: number) => (
                 <motion.tr key={budget.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }} className="hover:bg-muted/30 transition-colors cursor-pointer" onClick={() => setSelectedBudget(budget)}>
                   <TableCell className="font-mono font-medium">#{budget.id}</TableCell>
-                  <TableCell>{budget.client_name ?? "Cliente #" + budget.clientId}</TableCell>
+                  <TableCell>{budget.client_name ?? "Clientee #" + budget.clientId}</TableCell>
                   <TableCell>{budget.serviceOrderId ? `OS-${budget.serviceOrderId}` : "-"}</TableCell>
                   <TableCell className="font-medium">R$ {(Number(budget.total) - Number(budget.discount)).toFixed(2)}</TableCell>
                   <TableCell className="text-green-600">-R$ {Number(budget.discount).toFixed(2)}</TableCell>
@@ -154,7 +154,7 @@ export default function BudgetsPage() {
 
 function SendWhatsAppButton({ budget }: { budget: any }) {
   const { toast } = useToast();
-  const queryClient = useQueryClient();
+  const queryCliente = useQueryClient();
 
   const send = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -163,7 +163,7 @@ function SendWhatsAppButton({ budget }: { budget: any }) {
         method: "POST", credentials: "include"
       });
       const data = await res.json();
-      queryClient.invalidateQueries({ queryKey: ["/api/budgets"] });
+      queryCliente.invalidateQueries({ queryKey: ["/api/budgets"] });
       toast({ title: "✅ Enviado!", description: "Abrindo WhatsApp..." });
       if (data.whatsappUrl) window.open(data.whatsappUrl, "_blank");
     } catch {
@@ -227,7 +227,7 @@ function printBudget(budget: any) {
 
 function CreateBudgetDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const { toast } = useToast();
-  const queryClient = useQueryClient();
+  const queryCliente = useQueryClient();
   const { data: clients } = useClients();
   const { data: serviceOrders } = useServiceOrders();
   const [saving, setSaving] = useState(false);
@@ -259,7 +259,7 @@ function CreateBudgetDialog({ open, onOpenChange }: { open: boolean; onOpenChang
         body: JSON.stringify({ clientId: Number(form.clientId), serviceOrderId: form.serviceOrderId ? Number(form.serviceOrderId) : null, discount: parseFloat(form.discount || "0"), notes: form.notes, items: items.map(i => ({ type: i.type, description: i.description, quantity: parseFloat(i.quantity), unitPrice: parseFloat(i.unitPrice), total: parseFloat(i.total) })) }),
         credentials: "include",
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/budgets"] });
+      queryCliente.invalidateQueries({ queryKey: ["/api/budgets"] });
       toast({ title: "✅ Orçamento criado!" });
       onOpenChange(false);
       setForm({ clientId: "", serviceOrderId: "", discount: "0", notes: "" });
@@ -281,7 +281,7 @@ function CreateBudgetDialog({ open, onOpenChange }: { open: boolean; onOpenChang
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-sm font-medium">Cliente</label>
+              <label className="text-sm font-medium">Clientee</label>
               <select className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value={form.clientId} onChange={e => setForm({...form, clientId: e.target.value})}>
                 <option value="">Selecione...</option>
                 {clients?.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -343,7 +343,7 @@ function CreateBudgetDialog({ open, onOpenChange }: { open: boolean; onOpenChang
           </div>
         </div>
         <DialogFooter className="mt-6">
-          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
+          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancelarar</Button>
           <Button type="button" onClick={save} disabled={saving}>{saving ? "Salvando..." : "Criar Orçamento"}</Button>
         </DialogFooter>
       </DialogContent>

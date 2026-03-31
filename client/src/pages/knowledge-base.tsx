@@ -34,7 +34,7 @@ function useKnowledgeBase() {
 }
 
 function useCreateKnowledgeBase() {
-  const queryClient = useQueryClient();
+  const queryCliente = useQueryClient();
   const { toast } = useToast();
   return useMutation({
     mutationFn: async (data: z.infer<typeof createItemSchema>) => {
@@ -48,7 +48,7 @@ function useCreateKnowledgeBase() {
       return res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/knowledge-base"] });
+      queryCliente.invalidateQueries({ queryKey: ["/api/knowledge-base"] });
       toast({ title: "Success", description: "Technical spec added!" });
     },
     onError: (error: Error) => {
@@ -205,8 +205,8 @@ function CreateDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (op
             <Input placeholder="https://youtube.com/..." {...register("videoUrl")} className="mt-1" />
           </div>
           <DialogFooter className="mt-6">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-            <Button type="submit" disabled={isPending}>{isPending ? "Saving..." : "Add Spec"}</Button>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
+            <Button type="submit" disabled={isPending}>{isPending ? "Salvando..." : "Add Spec"}</Button>
           </DialogFooter>
         </form>
       </DialogContent>

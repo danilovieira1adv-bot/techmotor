@@ -56,8 +56,8 @@ export default function ServiceOrdersPage() {
     <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Service Orders</h1>
-          <p className="text-muted-foreground">Manage engine rectification jobs and track progress.</p>
+          <h1 className="text-3xl font-bold tracking-tight">Ordens de Serviço</h1>
+          <p className="text-muted-foreground">Gerencie OS de retífica e acompanhe o progresso.</p>
         </div>
         <div className="flex items-center gap-2">
           <CreateServiceOrderDialog open={isCreateOpen} onOpenChange={setIsCreateOpen} />
@@ -68,7 +68,7 @@ export default function ServiceOrdersPage() {
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input 
-            placeholder="Search OS number..." 
+            placeholder="Buscar número da OS..." 
             className="pl-9 bg-background border-border/50"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -84,12 +84,12 @@ export default function ServiceOrdersPage() {
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/50 hover:bg-muted/50">
-              <TableHead className="w-[120px]">OS Number</TableHead>
-              <TableHead>Client</TableHead>
-              <TableHead>Vehicle</TableHead>
-              <TableHead>Open Date</TableHead>
+              <TableHead className="w-[120px]">Número da OS</TableHead>
+              <TableHead>Cliente</TableHead>
+              <TableHead>Veículo</TableHead>
+              <TableHead>Data de Abertura</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="text-right">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -107,7 +107,7 @@ export default function ServiceOrdersPage() {
             ) : filteredOrders?.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} className="h-32 text-center text-muted-foreground">
-                  No service orders found. Create one to get started.
+                  Nenhuma OS encontrada. Crie uma para começar.
                 </TableCell>
               </TableRow>
             ) : (
@@ -120,8 +120,8 @@ export default function ServiceOrdersPage() {
                   className="group hover:bg-muted/30 transition-colors"
                 >
                   <TableCell className="font-mono font-medium">{order.osNumber}</TableCell>
-                  <TableCell>Client #{order.clientId}</TableCell>
-                  <TableCell>Vehicle #{order.vehicleId}</TableCell>
+                  <TableCell>Cliente #{order.clientId}</TableCell>
+                  <TableCell>Veículo #{order.vehicleId}</TableCell>
                   <TableCell>{order.openDate ? new Date(order.openDate).toLocaleDateString() : '-'}</TableCell>
                   <TableCell>
                     <Badge className={`${getStatusColor(order.status)} border-0 shadow-sm`}>
@@ -170,14 +170,14 @@ function CreateServiceOrderDialog({ open, onOpenChange }: { open: boolean, onOpe
       <DialogTrigger asChild>
         <Button className="shadow-lg shadow-primary/20 gap-2">
           <Plus className="h-4 w-4" />
-          New Service Order
+          Nova OS
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Create Service Order</DialogTitle>
+          <DialogTitle>Criar Ordem de Serviço</DialogTitle>
           <DialogDescription>
-            Initiate a new engine rectification job.
+            Inicie um novo serviço de retífica.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -187,7 +187,7 @@ function CreateServiceOrderDialog({ open, onOpenChange }: { open: boolean, onOpe
               name="osNumber"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>OS Number</FormLabel>
+                  <FormLabel>Número da OS</FormLabel>
                   <FormControl>
                     <Input {...field} readOnly className="bg-muted font-mono" />
                   </FormControl>
@@ -201,14 +201,14 @@ function CreateServiceOrderDialog({ open, onOpenChange }: { open: boolean, onOpe
               name="clientId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Client</FormLabel>
+                  <FormLabel>Cliente</FormLabel>
                   <Select 
                     onValueChange={(val) => field.onChange(parseInt(val))}
                     defaultValue={field.value?.toString()}
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a client" />
+                        <SelectValue placeholder="Selecione um cliente" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -225,9 +225,9 @@ function CreateServiceOrderDialog({ open, onOpenChange }: { open: boolean, onOpe
             />
 
             <DialogFooter className="mt-6">
-              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
               <Button type="submit" disabled={isPending}>
-                {isPending ? "Creating..." : "Create Order"}
+                {isPending ? "Criando..." : "Create Order"}
               </Button>
             </DialogFooter>
           </form>

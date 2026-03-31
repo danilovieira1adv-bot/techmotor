@@ -35,12 +35,12 @@ import {
 import { z } from "zod";
 import { motion } from "framer-motion";
 
-export default function ClientsPage() {
+export default function ClientesPage() {
   const { data: clients, isLoading } = useClients();
   const [searchTerm, setSearchTerm] = useState("");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
-  const filteredClients = clients?.filter((client) =>
+  const filteredClientes = clients?.filter((client) =>
     client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     client.phone?.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -49,24 +49,24 @@ export default function ClientsPage() {
     <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Clients</h1>
-          <p className="text-muted-foreground">Manage your workshop clients and their vehicles.</p>
+          <h1 className="text-3xl font-bold tracking-tight">Clientes</h1>
+          <p className="text-muted-foreground">Gerencie os clientes e seus veículos.</p>
         </div>
-        <CreateClientDialog open={isCreateOpen} onOpenChange={setIsCreateOpen} />
+        <CreateClienteDialog open={isCreateOpen} onOpenChange={setIsCreateOpen} />
       </div>
 
       <div className="flex items-center gap-4 bg-card p-4 rounded-xl border shadow-sm">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search by name or phone..."
+            placeholder="Buscar por nome ou telefone..."
             className="pl-9 bg-background border-border/50"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
         <div className="text-sm text-muted-foreground">
-          {filteredClients?.length ?? 0} clients found
+          {filteredClientes?.length ?? 0} clientes encontrados
         </div>
       </div>
 
@@ -77,7 +77,7 @@ export default function ClientsPage() {
               <TableHead>Name</TableHead>
               <TableHead>Phone</TableHead>
               <TableHead>WhatsApp</TableHead>
-              <TableHead>Registered</TableHead>
+              <TableHead>Cadastrado</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -90,17 +90,17 @@ export default function ClientsPage() {
                   <TableCell><div className="h-4 w-24 bg-muted animate-pulse rounded" /></TableCell>
                 </TableRow>
               ))
-            ) : filteredClients?.length === 0 ? (
+            ) : filteredClientes?.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={4} className="h-32 text-center text-muted-foreground">
                   <div className="flex flex-col items-center gap-2">
                     <User className="h-8 w-8 opacity-30" />
-                    <p>No clients found. Add your first client!</p>
+                    <p>Nenhum cliente encontrado. Adicione o primeiro!</p>
                   </div>
                 </TableCell>
               </TableRow>
             ) : (
-              filteredClients?.map((client, index) => (
+              filteredClientes?.map((client, index) => (
                 <motion.tr
                   key={client.id}
                   initial={{ opacity: 0, y: 10 }}
@@ -125,11 +125,11 @@ export default function ClientsPage() {
                   <TableCell>
                     {client.whatsappOptIn ? (
                       <Badge className="bg-green-500 hover:bg-green-600 border-0 gap-1">
-                        <MessageCircle className="h-3 w-3" /> Active
+                        <MessageCircle className="h-3 w-3" /> Ativo
                       </Badge>
                     ) : (
                       <Badge variant="outline" className="text-muted-foreground gap-1">
-                        <MessageCircle className="h-3 w-3" /> Inactive
+                        <MessageCircle className="h-3 w-3" /> Inativo
                       </Badge>
                     )}
                   </TableCell>
@@ -146,14 +146,14 @@ export default function ClientsPage() {
   );
 }
 
-function CreateClientDialog({
+function CreateClienteDialog({
   open,
   onOpenChange,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const { mutate: createClient, isPending } = useCreateClient();
+  const { mutate: createCliente, isPending } = useCreateClient();
 
   const form = useForm<z.infer<typeof insertClientSchema>>({
     resolver: zodResolver(insertClientSchema),
@@ -165,7 +165,7 @@ function CreateClientDialog({
   });
 
   const onSubmit = (data: z.infer<typeof insertClientSchema>) => {
-    createClient(data, {
+    createCliente(data, {
       onSuccess: () => {
         onOpenChange(false);
         form.reset();
@@ -178,13 +178,13 @@ function CreateClientDialog({
       <DialogTrigger asChild>
         <Button className="shadow-lg shadow-primary/20 gap-2">
           <Plus className="h-4 w-4" />
-          New Client
+          Novo Clientee
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add New Client</DialogTitle>
-          <DialogDescription>Register a new client in the workshop system.</DialogDescription>
+          <DialogTitle>Add Novo Clientee</DialogTitle>
+          <DialogDescription>Cadastre um novo cliente no sistema.</DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -193,9 +193,9 @@ function CreateClientDialog({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Full Name</FormLabel>
+                  <FormLabel>Nome Completo</FormLabel>
                   <FormControl>
-                    <Input placeholder="Client name" {...field} />
+                    <Input placeholder="Nome do cliente" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -228,18 +228,18 @@ function CreateClientDialog({
                     />
                   </FormControl>
                   <div>
-                    <FormLabel className="cursor-pointer">Enable WhatsApp notifications</FormLabel>
-                    <p className="text-xs text-muted-foreground">Send OS updates via WhatsApp</p>
+                    <FormLabel className="cursor-pointer">Ativar notificações WhatsApp</FormLabel>
+                    <p className="text-xs text-muted-foreground">Send atualizações da OS via WhatsApp</p>
                   </div>
                 </FormItem>
               )}
             />
             <DialogFooter className="mt-6">
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-                Cancel
+                Cancelar
               </Button>
               <Button type="submit" disabled={isPending}>
-                {isPending ? "Saving..." : "Add Client"}
+                {isPending ? "Salvando..." : "Adicionar Clientee"}
               </Button>
             </DialogFooter>
           </form>

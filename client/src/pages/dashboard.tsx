@@ -1,197 +1,131 @@
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { useServiceOrders } from "@/hooks/use-service-orders";
-import { useClients } from "@/hooks/use-clients";
-import { Activity, Wrench, AlertCircle, CheckCircle2, TrendingUp, Clock } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer,
-  LineChart,
-  Line
-} from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from "recharts";
+import { ClipboardList, Users, CheckCircle, Clock, TrendingUp, Wrench, AlertCircle, Activity } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+const weekData = [
+  { day: "Seg", motores: 2 }, { day: "Ter", motores: 4 }, { day: "Qua", motores: 3 },
+  { day: "Qui", motores: 5 }, { day: "Sex", motores: 4 }, { day: "Sáb", motores: 2 }, { day: "Dom", motores: 1 },
+];
+
+const statusData = [
+  { name: "Abertas", value: 4, color: "#3b82f6" },
+  { name: "Em andamento", value: 3, color: "#f59e0b" },
+  { name: "Concluídas", value: 8, color: "#10b981" },
+];
 
 export default function DashboardPage() {
-  const { data: serviceOrders } = useServiceOrders();
-  const { data: clients } = useClients();
+  const { data: clients } = useQuery({
+    queryKey: ["/api/clients"],
+    queryFn: async () => { const r = await fetch("/api/clients", { credentials: "include" }); return r.json(); }
+  });
+  const { data: orders } = useQuery({
+    queryKey: ["/api/service-orders"],
+    queryFn: async () => { const r = await fetch("/api/service-orders", { credentials: "include" }); return r.json(); }
+  });
+  const { data: budgets } = useQuery({
+    queryKey: ["/api/budgets"],
+    queryFn: async () => { const r = await fetch("/api/budgets", { credentials: "include" }); return r.json(); }
+  });
 
-  // Metrics calculation
-  const totalOpen = serviceOrders?.filter(so => so.status === 'OPEN').length || 0;
-  const inProgress = serviceOrders?.filter(so => ['INSPECTION', 'MACHINING', 'ASSEMBLY'].includes(so.status)).length || 0;
-  const completed = serviceOrders?.filter(so => so.status === 'COMPLETED').length || 0;
-  
-  const chartData = [
-    { name: 'Mon', orders: 4 },
-    { name: 'Tue', orders: 3 },
-    { name: 'Wed', orders: 7 },
-    { name: 'Thu', orders: 5 },
-    { name: 'Fri', orders: 8 },
-    { name: 'Sat', orders: 2 },
-    { name: 'Sun', orders: 1 },
+  const totalClientes = Array.isArray(clients) ? clients.length : 0;
+  const totalOrders = Array.isArray(orders) ? orders.length : 0;
+  const completedOrders = Array.isArray(orders) ? orders.filter((o: any) => o.status === "COMPLETED").length : 0;
+  const pendingOrders = Array.isArray(orders) ? orders.filter((o: any) => o.status === "pending" || o.status === "OPEN").length : 0;
+  const totalBudgets = Array.isArray(budgets) ? budgets.length : 0;
+  const approvedBudgets = Array.isArray(budgets) ? budgets.filter((b: any) => b.status === "approved").length : 0;
+
+  const stats = [
+    { title: "Total de OS", value: totalOrders, icon: ClipboardList, color: "bg-blue-500", light: "bg-blue-50 dark:bg-blue-950", text: "text-blue-600", change: "+12% este mês" },
+    { title: "Clientes Ativos", value: totalClientes, icon: Users, color: "bg-emerald-500", light: "bg-emerald-50 dark:bg-emerald-950", text: "text-emerald-600", change: "+3 novos" },
+    { title: "OS Concluídas", value: completedOrders, icon: CheckCircle, color: "bg-violet-500", light: "bg-violet-50 dark:bg-violet-950", text: "text-violet-600", change: "Este mês" },
+    { title: "OS Pendentes", value: pendingOrders, icon: Clock, color: "bg-amber-500", light: "bg-amber-50 dark:bg-amber-950", text: "text-amber-600", change: "Aguardando" },
+    { title: "Orçamentos", value: totalBudgets, icon: TrendingUp, color: "bg-pink-500", light: "bg-pink-50 dark:bg-pink-950", text: "text-pink-600", change: `${approvedBudgets} aprovados` },
   ];
 
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const item = {
-    hidden: { y: 20, opacity: 0 },
-    show: { y: 0, opacity: 1 }
-  };
-
   return (
-    <div className="space-y-8 p-6 md:p-8 max-w-7xl mx-auto">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard Overview</h1>
-        <p className="text-muted-foreground">Real-time workshop performance metrics.</p>
+    <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-8 animate-fade-in">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+          <p className="text-muted-foreground">Visão geral da sua retífica em tempo real</p>
+        </div>
+        <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted px-3 py-1.5 rounded-lg">
+          <Activity className="h-4 w-4 text-green-500" />
+          <span>Sistema operacional</span>
+        </div>
       </div>
 
-      <motion.div 
-        variants={container}
-        initial="hidden"
-        animate="show"
-        className="grid gap-4 md:grid-cols-2 lg:grid-cols-4"
-      >
-        <motion.div variants={item}>
-          <Card className="metric-card bg-gradient-to-br from-blue-50 to-white dark:from-blue-950/20 dark:to-card border-l-4 border-l-primary">
-            <CardContent className="p-0 flex justify-between items-center">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Open Orders</p>
-                <div className="text-3xl font-bold text-primary">{totalOpen}</div>
-              </div>
-              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                <AlertCircle className="h-5 w-5 text-primary" />
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
+      {/* Cards de métricas */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        {stats.map((stat, i) => (
+          <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}>
+            <Card className="card-hover border-0 shadow-sm">
+              <CardContent className="p-4">
+                <div className={`h-10 w-10 rounded-xl ${stat.light} flex items-center justify-center mb-3`}>
+                  <stat.icon className={`h-5 w-5 ${stat.text}`} />
+                </div>
+                <div className="text-2xl font-bold">{stat.value}</div>
+                <div className="text-sm font-medium text-foreground">{stat.title}</div>
+                <div className="text-xs text-muted-foreground mt-1">{stat.change}</div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
+      </div>
 
-        <motion.div variants={item}>
-          <Card className="metric-card bg-gradient-to-br from-orange-50 to-white dark:from-orange-950/20 dark:to-card border-l-4 border-l-accent">
-            <CardContent className="p-0 flex justify-between items-center">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">In Progress</p>
-                <div className="text-3xl font-bold text-accent">{inProgress}</div>
-              </div>
-              <div className="h-10 w-10 rounded-full bg-accent/10 flex items-center justify-center">
-                <Wrench className="h-5 w-5 text-accent" />
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        <motion.div variants={item}>
-          <Card className="metric-card bg-gradient-to-br from-green-50 to-white dark:from-green-950/20 dark:to-card border-l-4 border-l-emerald-500">
-            <CardContent className="p-0 flex justify-between items-center">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Completed</p>
-                <div className="text-3xl font-bold text-emerald-600">{completed}</div>
-              </div>
-              <div className="h-10 w-10 rounded-full bg-emerald-500/10 flex items-center justify-center">
-                <CheckCircle2 className="h-5 w-5 text-emerald-500" />
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        <motion.div variants={item}>
-          <Card className="metric-card bg-gradient-to-br from-purple-50 to-white dark:from-purple-950/20 dark:to-card border-l-4 border-l-purple-500">
-            <CardContent className="p-0 flex justify-between items-center">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Active Clients</p>
-                <div className="text-3xl font-bold text-purple-600">{clients?.length || 0}</div>
-              </div>
-              <div className="h-10 w-10 rounded-full bg-purple-500/10 flex items-center justify-center">
-                <UsersIcon className="h-5 w-5 text-purple-500" />
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-      </motion.div>
-
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <motion.div 
-          className="col-span-4"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-        >
-          <Card className="h-full shadow-lg shadow-black/5">
-            <CardHeader>
-              <CardTitle>Weekly Output</CardTitle>
-              <CardDescription>Engines rectified over the last 7 days</CardDescription>
+      {/* Gráficos */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="lg:col-span-2">
+          <Card className="border-0 shadow-sm">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base font-semibold flex items-center gap-2">
+                <Wrench className="h-4 w-4 text-blue-500" />
+                Motores retificados — últimos 7 dias
+              </CardTitle>
             </CardHeader>
-            <CardContent className="pl-2">
-              <ResponsiveContainer width="100%" height={350}>
-                <BarChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
-                  <XAxis 
-                    dataKey="name" 
-                    stroke="#888888" 
-                    fontSize={12} 
-                    tickLine={false} 
-                    axisLine={false} 
-                  />
-                  <YAxis 
-                    stroke="#888888" 
-                    fontSize={12} 
-                    tickLine={false} 
-                    axisLine={false} 
-                    tickFormatter={(value) => `${value}`} 
-                  />
-                  <Tooltip 
-                    cursor={{ fill: 'transparent' }}
-                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' }}
-                  />
-                  <Bar 
-                    dataKey="orders" 
-                    fill="hsl(var(--primary))" 
-                    radius={[4, 4, 0, 0]} 
-                    barSize={40}
-                  />
+            <CardContent>
+              <ResponsiveContainer width="100%" height={220}>
+                <BarChart data={weekData} barSize={32}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                  <XAxis dataKey="day" tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
+                  <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: 12 }} />
+                  <Bar dataKey="motores" fill="#3b82f6" radius={[6, 6, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>
         </motion.div>
-        
-        <motion.div 
-          className="col-span-3"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-        >
-          <Card className="h-full shadow-lg shadow-black/5">
-            <CardHeader>
-              <CardTitle>Recent Activity</CardTitle>
-              <CardDescription>Latest updates from the workshop</CardDescription>
+
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
+          <Card className="border-0 shadow-sm">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base font-semibold flex items-center gap-2">
+                <AlertCircle className="h-4 w-4 text-amber-500" />
+                Status das OS
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-8">
-                {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="flex items-center">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-muted border border-border">
-                      <Clock className="h-4 w-4 text-muted-foreground" />
+              <ResponsiveContainer width="100%" height={160}>
+                <PieChart>
+                  <Pie data={statusData} cx="50%" cy="50%" innerRadius={45} outerRadius={70} paddingAngle={4} dataKey="value">
+                    {statusData.map((entry, index) => (
+                      <Cell key={index} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: 12 }} />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="space-y-2 mt-2">
+                {statusData.map((item, i) => (
+                  <div key={i} className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-2">
+                      <div className="h-2.5 w-2.5 rounded-full" style={{ background: item.color }} />
+                      <span className="text-muted-foreground">{item.name}</span>
                     </div>
-                    <div className="ml-4 space-y-1">
-                      <p className="text-sm font-medium leading-none">OS-2024-00{i} Updated</p>
-                      <p className="text-xs text-muted-foreground">
-                        Status changed to {['Inspection', 'Machining', 'Assembly', 'QC'][i-1]}
-                      </p>
-                    </div>
-                    <div className="ml-auto font-medium text-xs text-muted-foreground">
-                      {i * 2}h ago
-                    </div>
+                    <span className="font-medium">{item.value}</span>
                   </div>
                 ))}
               </div>
@@ -199,26 +133,34 @@ export default function DashboardPage() {
           </Card>
         </motion.div>
       </div>
-    </div>
-  );
-}
 
-function UsersIcon({ className }: { className?: string }) {
-  return (
-    <svg 
-      xmlns="http://www.w3.org/2000/svg" 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      stroke="currentColor" 
-      strokeWidth="2" 
-      strokeLinecap="round" 
-      strokeLinejoin="round" 
-      className={className}
-    >
-      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-      <circle cx="9" cy="7" r="4" />
-      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-    </svg>
+      {/* Atividade recente */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base font-semibold flex items-center gap-2">
+              <Activity className="h-4 w-4 text-blue-500" />
+              Atividade recente
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {[
+                { text: "Nova OS criada — Motor Cummins ISB", time: "2h atrás", color: "bg-blue-500" },
+                { text: "Inspeção aprovada pela IA — OS-2024-003", time: "4h atrás", color: "bg-emerald-500" },
+                { text: "Orçamento enviado via WhatsApp", time: "6h atrás", color: "bg-violet-500" },
+                { text: "Cliente cadastrado — Transportadora Silva", time: "8h atrás", color: "bg-amber-500" },
+              ].map((item, i) => (
+                <motion.div key={i} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.7 + i * 0.05 }} className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors">
+                  <div className={`h-2 w-2 rounded-full ${item.color} flex-shrink-0`} />
+                  <span className="text-sm flex-1">{item.text}</span>
+                  <span className="text-xs text-muted-foreground">{item.time}</span>
+                </motion.div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+    </div>
   );
 }
