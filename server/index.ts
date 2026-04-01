@@ -1,4 +1,5 @@
 import session from "express-session";
+import MemoryStore from "memorystore";
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
@@ -7,10 +8,12 @@ import { createServer } from "http";
 
 const app = express();
 
+  const MemoryStoreSession = MemoryStore(session);
   app.use(session({
     secret: process.env.SESSION_SECRET || "techmotor-secret-key",
     resave: false,
     saveUninitialized: false,
+    store: new MemoryStoreSession({ checkPeriod: 86400000 }),
     cookie: {
       secure: false,
       httpOnly: true,
