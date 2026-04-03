@@ -8,10 +8,14 @@ import { api } from "../shared/routes";
 import { z } from "zod";
 import { setupAuth, registerAuthRoutes, isAuthenticated } from "./replit_integrations/auth";
 import { registerChatRoutes } from "./replit_integrations/chat";
+import { publicRoutes as tenantsPublicRoutes, protectedRoutes, landingRoutes } from "./tenants-routes-integration";
+import paymentRouter from "./payment-routes";
+import { publicRoutes, protectedRoutes as publicProtectedRoutes } from "./public-routes";
+import authRouter from "./auth-api";
 import OpenAI from "openai";
 
 const openai = new OpenAI({
-  apiKey: process.env.DEEPSEEK_API_KEY,
+  apiKey: process.env.DEEPSEEK_API_KEY || 'sk-fake-key',
   baseURL: process.env.DEEPSEEK_API_URL,
 });
 
@@ -26,6 +30,21 @@ export async function registerRoutes(
   
   // Setup chat integration (simulated whatsapp)
   registerChatRoutes(app);
+
+  // Integrar rotas públicas primeiro
+  app.use(publicRoutes);
+  app.use(landingRoutes);
+  
+  // Integrar rotas de tenants
+  app.use(tenantsPublicRoutes);
+  
+  // Integrar rotas protegidas
+  app.use(publicProtectedRoutes);
+  app.use(protectedRoutes);
+  app.use(paymentRouter);
+  
+  // Integrar rotas de autenticação (recuperação de senha)
+  app.use('/api/auth', authRouter);
 
   // Custom endpoints
   

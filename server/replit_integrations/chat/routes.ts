@@ -3,7 +3,7 @@ import OpenAI from "openai";
 import { chatStorage } from "./storage";
 
 const openai = new OpenAI({
-  apiKey: process.env.DEEPSEEK_API_KEY,
+  apiKey: process.env.DEEPSEEK_API_KEY || 'sk-fake-key',
   baseURL: process.env.DEEPSEEK_API_URL,
 });
 

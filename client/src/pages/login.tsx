@@ -98,7 +98,19 @@ export default function LoginPage() {
                 />
               </div>
               <div>
-                <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Senha</label>
+                <div className="flex justify-between items-center mb-1">
+                  <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Senha</label>
+                  <a 
+                    href="/forgot-password" 
+                    className="text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 hover:underline"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      window.location.href = '/forgot-password';
+                    }}
+                  >
+                    Esqueci minha senha
+                  </a>
+                </div>
                 <Input
                   className="mt-1 h-11 border-slate-200 dark:border-slate-700 focus:border-blue-500 focus:ring-blue-500"
                   type="password"

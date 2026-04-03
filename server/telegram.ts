@@ -3,7 +3,7 @@ import OpenAI from "openai";
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
 const openai = new OpenAI({
-  apiKey: process.env.DEEPSEEK_API_KEY,
+  apiKey: process.env.DEEPSEEK_API_KEY || 'sk-fake-key',
   baseURL: process.env.DEEPSEEK_API_URL,
 });
 

@@ -16,8 +16,10 @@ import InspectionPage from "@/pages/inspection";
 import BudgetsPage from "@/pages/budgets";
 import ClientsPage from "@/pages/clients";
 import KnowledgeBasePage from "@/pages/knowledge-base";
-import ClientsPage from "@/pages/clients";
-import KnowledgeBasePage from "@/pages/knowledge-base";
+import LandingPage from "@/pages/landing";
+import RegisterPage from "@/pages/register";
+import ForgotPasswordPage from "@/pages/forgot-password";
+import ResetPasswordPage from "@/pages/reset-password";
 
 function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -53,7 +55,17 @@ function Router() {
   }
 
   if (!user && !isLoading) {
-    return <LoginPage />;
+    return (
+      <Switch>
+        <Route path="/" component={LandingPage} />
+        <Route path="/login" component={LoginPage} />
+        <Route path="/register" component={RegisterPage} />
+        <Route path="/forgot-password" component={ForgotPasswordPage} />
+        <Route path="/reset-password" component={ResetPasswordPage} />
+        <Route path="/signup" component={LoginPage} />
+        <Route component={LandingPage} />
+      </Switch>
+    );
   }
 
   return (
