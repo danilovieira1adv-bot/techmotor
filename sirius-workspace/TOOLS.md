@@ -1,7 +1,7 @@
 # TOOLS.md - Setup do RetíficaPro
 
 ## VPS
-- Host: [VPS_IP]
+- Host: 187.77.60.16
 - User: root
 - Alias: srv1430825
 
@@ -18,10 +18,10 @@
 - Rebuild: docker compose -f /opt/techmotor/docker-compose.yml build app && docker compose -f /opt/techmotor/docker-compose.yml up -d app
 
 ## Banco
-- URL: postgresql://postgres:[DB_PASSWORD]@172.17.0.1:5432/techmotor
-- Admin site: admin@retificapro.com.br / [ADMIN_PASSWORD]
+- URL: postgresql://postgres:postgres123@172.17.0.1:5432/techmotor
+- Admin site: admin@retificapro.com.br / Admin@123
 
 ## LiteLLM + DeepSeek
 - LiteLLM: porta 4000 em /docker/litellm/
 - Proxy: porta 4001 (serviço litellm-proxy)
-- DeepSeek API: [DEEPSEEK_API_KEY]
+- DeepSeek API: sk-002365092bf3488298722b53617ff727
