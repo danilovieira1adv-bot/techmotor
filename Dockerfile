@@ -1,18 +1,10 @@
-FROM node:18-alpine
+FROM python:3.11-slim
 
-WORKDIR /app
+WORKDIR /root/techmotor
 
-# Copiar arquivos de dependência
-COPY package*.json ./
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Instalar dependências (incluindo tsx)
-RUN npm install
-
-# Copiar o resto do código
 COPY . .
 
-# Expor porta
-EXPOSE 5000
-
-# Comando para rodar com tsx
-CMD ["npx", "tsx", "server/index.ts"]
+CMD ["python", "main.py"]
